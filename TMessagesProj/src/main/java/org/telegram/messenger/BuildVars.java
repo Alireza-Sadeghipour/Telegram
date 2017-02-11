@@ -16,7 +16,7 @@ public class BuildVars {
     public static String APP_HASH = "62e82f87383ba3a648d3dcfe70261bda"; //obtain your own APP_HASH at https://core.telegram.org/api/obtaining_api_id
     public static String HOCKEY_APP_HASH = "09134053671e4b0781c497bcc430ed14";
     public static String HOCKEY_APP_HASH_DEBUG = "09134053671e4b0781c497bcc430ed14";
-    public static String GCM_SENDER_ID = "760348033672";
+    public static String GCM_SENDER_ID = "singular-winter-154011";
     public static String SEND_LOGS_EMAIL = "email@gmail.com";
     public static String BING_SEARCH_KEY = ""; //obtain your own KEY at https://www.bing.com/dev/en-us/dev-center
     public static String FOURSQUARE_API_KEY = ""; //obtain your own KEY at https://developer.foursquare.com/
