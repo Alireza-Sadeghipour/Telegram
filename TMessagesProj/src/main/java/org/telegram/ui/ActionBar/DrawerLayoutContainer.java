@@ -18,6 +18,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -38,6 +39,7 @@ public class DrawerLayoutContainer extends FrameLayout {
     private static final int MIN_DRAWER_MARGIN = 64;
 
     private ViewGroup drawerLayout;
+    private ViewGroup secondDrawerLayout;
     private ActionBarLayout parentActionBarLayout;
 
     private boolean maybeStartTracking;
@@ -59,6 +61,7 @@ public class DrawerLayoutContainer extends FrameLayout {
     private boolean allowOpenDrawer;
 
     private float drawerPosition;
+    private float secondDrawerPosition;
     private boolean drawerOpened;
     private boolean allowDrawContent = true;
 
@@ -129,11 +132,24 @@ public class DrawerLayoutContainer extends FrameLayout {
         }
     }
 
+    public void setSecondDrawerLayout(ViewGroup layout) {
+        secondDrawerLayout = layout;
+        addView(secondDrawerLayout);
+        if (Build.VERSION.SDK_INT >= 21) {
+            secondDrawerLayout.setFitsSystemWindows(true);
+        }
+    }
+
     public void moveDrawerByX(float dx) {
+        Log.d("telegram", dx + "");
         setDrawerPosition(drawerPosition + dx);
+        if(drawerPosition == 0) {
+            setSecondDrawerPosition(secondDrawerPosition + dx);
+        }
     }
 
     public void setDrawerPosition(float value) {
+        Log.d("telegram", value + "!");
         drawerPosition = value;
         if (drawerPosition > drawerLayout.getMeasuredWidth()) {
             drawerPosition = drawerLayout.getMeasuredWidth();
@@ -147,6 +163,23 @@ public class DrawerLayoutContainer extends FrameLayout {
             drawerLayout.setVisibility(newVisibility);
         }
         setScrimOpacity(drawerPosition / (float) drawerLayout.getMeasuredWidth());
+    }
+
+    public void setSecondDrawerPosition(float value) {
+        Log.d("telegram", value + "!!!");
+        secondDrawerPosition = value;
+//        if (drawerPosition > drawerLayout.getMeasuredWidth()) {
+//            drawerPosition = drawerLayout.getMeasuredWidth();
+//        } else if (drawerPosition < 0) {
+//            drawerPosition = 0;
+//        }
+        secondDrawerLayout.setTranslationX(0 - secondDrawerPosition);
+
+        final int newVisibility = secondDrawerPosition < 0 ? VISIBLE : GONE;
+        if (secondDrawerLayout.getVisibility() != newVisibility) {
+            secondDrawerLayout.setVisibility(newVisibility);
+        }
+        setScrimOpacity(0 - secondDrawerPosition / (float) secondDrawerLayout.getMeasuredWidth());
     }
 
     public float getDrawerPosition() {
@@ -376,7 +409,7 @@ public class DrawerLayoutContainer extends FrameLayout {
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
 
             try {
-                if (drawerLayout != child) {
+                if (drawerLayout != child && secondDrawerLayout != child) {
                     child.layout(lp.leftMargin, lp.topMargin, lp.leftMargin + child.getMeasuredWidth(), lp.topMargin + child.getMeasuredHeight());
                 } else {
                     child.layout(-child.getMeasuredWidth(), lp.topMargin, 0, lp.topMargin + child.getMeasuredHeight());
@@ -427,7 +460,7 @@ public class DrawerLayoutContainer extends FrameLayout {
                 }
             }
 
-            if (drawerLayout != child) {
+            if (drawerLayout != child && secondDrawerLayout != child) {
                 final int contentWidthSpec = MeasureSpec.makeMeasureSpec(widthSize - lp.leftMargin - lp.rightMargin, MeasureSpec.EXACTLY);
                 final int contentHeightSpec = MeasureSpec.makeMeasureSpec(heightSize - lp.topMargin - lp.bottomMargin, MeasureSpec.EXACTLY);
                 child.measure(contentWidthSpec, contentHeightSpec);
@@ -446,7 +479,7 @@ public class DrawerLayoutContainer extends FrameLayout {
             return false;
         }
         final int height = getHeight();
-        final boolean drawingContent = child != drawerLayout;
+        final boolean drawingContent = (child != drawerLayout && child != secondDrawerLayout);
         int lastVisibleChild = 0;
         int clipLeft = 0, clipRight = getWidth();
 
@@ -455,10 +488,10 @@ public class DrawerLayoutContainer extends FrameLayout {
             final int childCount = getChildCount();
             for (int i = 0; i < childCount; i++) {
                 final View v = getChildAt(i);
-                if (v.getVisibility() == VISIBLE && v != drawerLayout) {
+                if (v.getVisibility() == VISIBLE && v != drawerLayout && v!= secondDrawerLayout) {
                     lastVisibleChild = i;
                 }
-                if (v == child || v.getVisibility() != VISIBLE || v != drawerLayout || v.getHeight() < height) {
+                if (v == child || v.getVisibility() != VISIBLE || v != drawerLayout || v != secondDrawerLayout || v.getHeight() < height) {
                     continue;
                 }
 

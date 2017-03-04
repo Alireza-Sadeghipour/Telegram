@@ -323,6 +323,23 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
         listView.setDividerHeight(0);
         listView.setVerticalScrollBarEnabled(false);
         drawerLayoutContainer.setDrawerLayout(listView);
+
+        ListView secondListView = new ListView(this) {
+            @Override
+            public boolean hasOverlappingRendering() {
+                return false;
+            }
+        };
+        secondListView.setBackgroundColor(0x112233ff);
+        secondListView.setAdapter(drawerLayoutAdapter = new DrawerLayoutAdapter(this));
+        secondListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+        secondListView.setDivider(null);
+        secondListView.setDividerHeight(0);
+        secondListView.setVerticalScrollBarEnabled(false);
+
+        drawerLayoutContainer.setSecondDrawerLayout(secondListView);
+
+
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) listView.getLayoutParams();
         Point screenSize = AndroidUtilities.getRealScreenSize();
         layoutParams.width = AndroidUtilities.isTablet() ? AndroidUtilities.dp(320) : Math.min(AndroidUtilities.dp(320), Math.min(screenSize.x, screenSize.y) - AndroidUtilities.dp(56));
