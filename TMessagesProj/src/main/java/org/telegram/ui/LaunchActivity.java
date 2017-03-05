@@ -330,12 +330,14 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
                 return false;
             }
         };
-        secondListView.setBackgroundColor(0x112233ff);
+        secondListView.setBackgroundColor(0xffffffff);
         secondListView.setAdapter(drawerLayoutAdapter = new DrawerLayoutAdapter(this));
         secondListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         secondListView.setDivider(null);
         secondListView.setDividerHeight(0);
         secondListView.setVerticalScrollBarEnabled(false);
+
+
 
         drawerLayoutContainer.setSecondDrawerLayout(secondListView);
 

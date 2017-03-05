@@ -134,6 +134,7 @@ public class DrawerLayoutContainer extends FrameLayout {
 
     public void setSecondDrawerLayout(ViewGroup layout) {
         secondDrawerLayout = layout;
+
         addView(secondDrawerLayout);
         if (Build.VERSION.SDK_INT >= 21) {
             secondDrawerLayout.setFitsSystemWindows(true);
@@ -143,13 +144,11 @@ public class DrawerLayoutContainer extends FrameLayout {
     public void moveDrawerByX(float dx) {
         Log.d("telegram", dx + "");
         setDrawerPosition(drawerPosition + dx);
-        if(drawerPosition == 0) {
-            setSecondDrawerPosition(secondDrawerPosition + dx);
-        }
+        setSecondDrawerPosition(secondDrawerPosition + dx);
+
     }
 
     public void setDrawerPosition(float value) {
-        Log.d("telegram", value + "!");
         drawerPosition = value;
         if (drawerPosition > drawerLayout.getMeasuredWidth()) {
             drawerPosition = drawerLayout.getMeasuredWidth();
@@ -166,20 +165,21 @@ public class DrawerLayoutContainer extends FrameLayout {
     }
 
     public void setSecondDrawerPosition(float value) {
-        Log.d("telegram", value + "!!!");
+        Log.d("telegram", value + "!");
         secondDrawerPosition = value;
-//        if (drawerPosition > drawerLayout.getMeasuredWidth()) {
-//            drawerPosition = drawerLayout.getMeasuredWidth();
-//        } else if (drawerPosition < 0) {
-//            drawerPosition = 0;
-//        }
-        secondDrawerLayout.setTranslationX(0 - secondDrawerPosition);
+        if (0 - secondDrawerPosition > drawerLayout.getMeasuredWidth()) {
+            secondDrawerPosition = 0 - drawerLayout.getMeasuredWidth();
+        } else if (secondDrawerPosition > 0) {
+            secondDrawerPosition = 0;
+        }
+        Log.d("telegram", drawerLayout.getMeasuredWidth() + "!!");
+        secondDrawerLayout.setTranslationX(secondDrawerPosition);
 
         final int newVisibility = secondDrawerPosition < 0 ? VISIBLE : GONE;
         if (secondDrawerLayout.getVisibility() != newVisibility) {
             secondDrawerLayout.setVisibility(newVisibility);
         }
-        setScrimOpacity(0 - secondDrawerPosition / (float) secondDrawerLayout.getMeasuredWidth());
+        setScrimOpacity(0 - secondDrawerPosition / (float) drawerLayout.getMeasuredWidth());
     }
 
     public float getDrawerPosition() {
@@ -411,8 +411,10 @@ public class DrawerLayoutContainer extends FrameLayout {
             try {
                 if (drawerLayout != child && secondDrawerLayout != child) {
                     child.layout(lp.leftMargin, lp.topMargin, lp.leftMargin + child.getMeasuredWidth(), lp.topMargin + child.getMeasuredHeight());
-                } else {
+                } else if(secondDrawerLayout != child){
                     child.layout(-child.getMeasuredWidth(), lp.topMargin, 0, lp.topMargin + child.getMeasuredHeight());
+                }else {
+                    child.layout(r, lp.topMargin, r + child.getMeasuredWidth(), lp.topMargin + child.getMeasuredHeight());
                 }
             } catch (Exception e) {
                 FileLog.e("tmessages", e);
